@@ -74,7 +74,7 @@ to this tsv file.
 
 To get familiar run metamon_player.py to get help
     
-    python metamon_player.py --help
+    python metamon_play.py --help
 
 Message:
     
@@ -92,7 +92,7 @@ Message:
 
 for example:
 
-    paython metamon_player.py -e -s
+    paython metamon_play.py -e -s
 
 Will try to read file wallets.tsv in current dir,
 auto fight, mint eggs, and save stats to corresponding 
@@ -108,5 +108,5 @@ uses access token instead of signature (tokens expire and it
 is more secure to use, however it will require manual step of
 obtaining one every day for battles)
 
-Hope you will have fun playing and autoplayer would make it 
+Hope you will have fun playing and this script will make it 
 a little bit less tedious. Enjoy!
