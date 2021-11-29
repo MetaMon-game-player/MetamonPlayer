@@ -3,6 +3,7 @@ from tqdm import trange
 import requests
 import os
 import sys
+import csv
 import pandas as pd
 from datetime import datetime
 
@@ -326,7 +327,12 @@ if __name__ == "__main__":
         print(f"Input file {args.input_tsv} does not exist")
         sys.exit(-1)
 
-    wallets = pd.read_csv(args.input_tsv, sep="\t")
+    # determine delimiter char from given input file
+    with open(args.input_tsv) as csvfile:
+        dialect = csv.Sniffer().sniff(csvfile.readline(), "\t ;,")
+        delim = dialect.delimiter
+
+    wallets = pd.read_csv(args.input_tsv, sep=delim)
 
     auto_lvlup = not args.no_lvlup
     for i, r in wallets.iterrows():
