@@ -272,6 +272,7 @@ class MetamonPlayer:
         mtm_stats_df = pd.concat(self.mtm_stats_df)
         if os.path.exists(mtm_stats_file_name) and self.output_stats:
             back_fn = f"{mtm_stats_file_name}.bak"
+            os.rename(mtm_stats_file_name, back_fn)
             tmp_df = pd.read_csv(back_fn, sep="\t", dtype="str")
             upd_df = pd.concat([mtm_stats_df, tmp_df])
             mtm_stats_df = upd_df
