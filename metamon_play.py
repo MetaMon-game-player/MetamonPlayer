@@ -5,6 +5,7 @@ import os
 import sys
 import csv
 import pandas as pd
+from time import sleep
 from datetime import datetime
 
 
@@ -30,6 +31,8 @@ def post_formdata(payload, url="", headers=None):
     if headers is None:
         headers = {}
 
+    # Add delay to avoid error from too many requests per second
+    sleep(0.33)
     response = requests.request("POST",
                                 url,
                                 headers=headers,
