@@ -129,6 +129,7 @@ class MetamonPlayer:
         total_bp_fragment_num = 0
         mtm_stats = []
         my_monster_id = my_monster.get("id")
+        my_monster_token_id = my_monster.get("tokenId")
         my_level = my_monster.get("level")
         my_power = my_monster.get("sca")
         battle_level = pick_battle_level(my_level)
@@ -176,7 +177,7 @@ class MetamonPlayer:
                 self.total_fail += 1
 
         mtm_stats.append({
-            "My metamon id": my_monster_id,
+            "My metamon id": my_monster_token_id,
             "League lvl": battle_level,
             "Total battles": loop_count,
             "My metamon power": my_power,
