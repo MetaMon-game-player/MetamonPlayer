@@ -193,12 +193,20 @@ class MetamonPlayer:
 
     def get_wallet_properties(self):
         """ Obtain list of metamons on the wallet"""
-        payload = {"address": self.address, "page": 1, "pageSize": 60}
-        headers = {
-            "accessToken": self.token,
-        }
-        response = post_formdata(payload, WALLET_PROPERTY_LIST, headers)
-        data = response.get("data", {}).get("metamonList", [])
+        data = []
+        page = 1
+        while True:
+            payload = {"address": self.address, "page": page, "pageSize": 60}
+            headers = {
+                "accessToken": self.token,
+            }
+            response = post_formdata(payload, WALLET_PROPERTY_LIST, headers)
+            mtms = response.get("data", {}).get("metamonList", [])
+            if len(mtms) > 0:
+                data.extend(mtms)
+                page += 1
+            else:
+                break
         return data
 
     def list_monsters(self):
@@ -221,6 +229,7 @@ class MetamonPlayer:
         self.get_wallet_properties()
         monsters = self.list_monsters()
         wallet_monsters = self.get_wallet_properties()
+        print(f"Monsters total: {len(wallet_monsters)}")
 
         available_monsters = [
             monster for monster in wallet_monsters if monster.get("tear") > 0
