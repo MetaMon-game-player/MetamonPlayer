@@ -32,13 +32,19 @@ def post_formdata(payload, url="", headers=None):
         headers = {}
 
     # Add delay to avoid error from too many requests per second
-    sleep(0.33)
-    response = requests.request("POST",
-                                url,
-                                headers=headers,
-                                data=payload,
-                                files=files)
-    return response.json()
+    sleep(0.5)
+
+    for _ in range(5):
+        try:
+            response = requests.request("POST",
+                                        url,
+                                        headers=headers,
+                                        data=payload,
+                                        files=files)
+            return response.json()
+        except:
+            continue
+    return {}
 
 
 def get_battler_score(monster):
