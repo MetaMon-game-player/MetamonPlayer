@@ -141,7 +141,7 @@ class MetamonPlayer:
         battle_level = pick_battle_level(my_level)
 
         tbar = trange(loop_count)
-        tbar.set_description("Fighting...")
+        tbar.set_description(f"Fighting with {my_monster_token_id}...")
         for _ in tbar:
             payload = {
                 "monsterA": my_monster_id,
@@ -168,7 +168,7 @@ class MetamonPlayer:
                                     headers)
                 code = res.get("code")
                 if code == "SUCCESS":
-                    tbar.set_description("LVL UP successful! Continue fighting...")
+                    tbar.set_description(f"LVL UP successful! Continue fighting with {my_monster_token_id}...")
                     my_level += 1
                     # Update league level if new level is 21 or 41
                     battle_level = pick_battle_level(my_level)
@@ -213,6 +213,8 @@ class MetamonPlayer:
                 data.extend(mtms)
                 page += 1
             else:
+                if 'code' in response and response['code'] == 'FAIL':
+                    print(response['message'])
                 break
         return data
 
@@ -233,7 +235,6 @@ class MetamonPlayer:
         mtm_stats_file_name = f"{w_name}_stats.tsv"
         self.init_token()
 
-        self.get_wallet_properties()
         monsters = self.list_monsters()
         wallet_monsters = self.get_wallet_properties()
         print(f"Monsters total: {len(wallet_monsters)}")
