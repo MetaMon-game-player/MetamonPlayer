@@ -359,7 +359,7 @@ if __name__ == "__main__":
                                                      "be saved in current dir.",
                         action="store_true", default=False)
     parser.add_argument("-o", "--open-eggs", help="Open the eggs with amount",
-                        type=int, default=False)
+                        type=int, default=0)
 
     args = parser.parse_args()
 
