@@ -19,6 +19,7 @@ LIST_BATTLER_URL = f"{BASE_URL}/getBattelObjects"
 WALLET_PROPERTY_LIST = f"{BASE_URL}/getWalletPropertyList"
 LVL_UP_URL = f"{BASE_URL}/updateMonster"
 MINT_EGG_URL = f"{BASE_URL}/composeMonsterEgg"
+OPEN_EGG_URL = f"{BASE_URL}/openMonsterEgg"
 
 
 def datetime_now():
@@ -318,6 +319,24 @@ class MetamonPlayer:
             minted_eggs += 1
         print(f"Minted Eggs Total: {minted_eggs}")
 
+    def open_eggs(self, egg_count = 0):
+        if self.token is None or self.token == '':
+            self.init_token()
+
+        headers = {
+            "accessToken": self.token
+        }
+        payload = {"address": self.address}
+
+        for i in range(egg_count):
+            res = post_formdata(payload, OPEN_EGG_URL, headers)
+            code = res.get("code")
+            if code != "SUCCESS":
+                print("Open Eggs Failed: {}".format(res.get("message")))
+                break
+            data = res.get("data")
+            print("Open Eggs Success: {} x {}".format(data.get("amount"), data.get("category")))
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -339,6 +358,8 @@ if __name__ == "__main__":
                                                      "Two files <name>_summary.tsv and <name>_stats.tsv will "
                                                      "be saved in current dir.",
                         action="store_true", default=False)
+    parser.add_argument("-o", "--open-eggs", help="Open the eggs with amount",
+                        type=int, default=False)
 
     args = parser.parse_args()
 
@@ -365,3 +386,4 @@ if __name__ == "__main__":
             mtm.battle(w_name=r["name"])
         if args.mint_eggs:
             mtm.mint_eggs()
+        mtm.open_eggs(args.open_eggs)
