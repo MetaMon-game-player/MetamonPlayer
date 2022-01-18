@@ -201,21 +201,18 @@ class MetamonPlayer:
     def get_wallet_properties(self):
         """ Obtain list of metamons on the wallet"""
         data = []
-        page = 1
-        while True:
-            payload = {"address": self.address, "page": page, "pageSize": 60}
-            headers = {
-                "accessToken": self.token,
-            }
-            response = post_formdata(payload, WALLET_PROPERTY_LIST, headers)
-            mtms = response.get("data", {}).get("metamonList", [])
-            if len(mtms) > 0:
-                data.extend(mtms)
-                page += 1
-            else:
-                if 'code' in response and response['code'] == 'FAIL':
-                    print(response['message'])
-                break
+        payload = {"address": self.address}
+        headers = {
+            "accessToken": self.token,
+        }
+        response = post_formdata(payload, WALLET_PROPERTY_LIST, headers)
+        mtms = response.get("data", {}).get("metamonList", [])
+        if len(mtms) > 0:
+            data.extend(mtms)
+            data = sorted(data, key=lambda metamon: metamon['id'])
+        else:
+            if 'code' in response and response['code'] == 'FAIL':
+                print(response['message'])
         return data
 
     def list_monsters(self):
