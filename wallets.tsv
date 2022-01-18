@@ -1,0 +1,3 @@
+name	address	sign	msg
+wallet1	0xwalletaddress	0xPayloadSign	LogIn-msg-id
+wallet2	0xwallet2address	0xPayloadSign2	LogIn-msg-id2
