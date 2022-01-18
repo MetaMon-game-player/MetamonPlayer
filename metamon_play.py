@@ -201,9 +201,7 @@ class MetamonPlayer:
     def get_wallet_properties(self):
         """ Obtain list of metamons on the wallet"""
         data = []
-        page = 1
-        while True:
-            payload = {"address": self.address, "page": page, "pageSize": 60}
+        payload = {"address": self.address}
             headers = {
                 "accessToken": self.token,
             }
@@ -211,9 +209,8 @@ class MetamonPlayer:
             mtms = response.get("data", {}).get("metamonList", [])
             if len(mtms) > 0:
                 data.extend(mtms)
-                page += 1
+            data = sorted(data, key=lambda metamon: metamon['id'])
             else:
-                break
         return data
 
     def list_monsters(self):
@@ -233,7 +230,6 @@ class MetamonPlayer:
         mtm_stats_file_name = f"{w_name}_stats.tsv"
         self.init_token()
 
-        self.get_wallet_properties()
         monsters = self.list_monsters()
         wallet_monsters = self.get_wallet_properties()
         print(f"Monsters total: {len(wallet_monsters)}")
