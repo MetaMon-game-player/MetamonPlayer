@@ -198,22 +198,19 @@ class MetamonPlayer:
         print(mtm_stats_df)
         self.mtm_stats_df.append(mtm_stats_df)
 
+    
     def get_wallet_properties(self):
-        """ Obtain list of metamons on the wallet"""
+        """ Obtain list of metamons on the wallet -1"""
         data = []
-        page = 1
-        while True:
-            payload = {"address": self.address, "page": page, "pageSize": 60}
-            headers = {
-                "accessToken": self.token,
-            }
-            response = post_formdata(payload, WALLET_PROPERTY_LIST, headers)
-            mtms = response.get("data", {}).get("metamonList", [])
-            if len(mtms) > 0:
-                data.extend(mtms)
-                page += 1
-            else:
-                break
+        payload = {"address": self.address, "orderType": -1}
+        headers = {
+            "accessToken": self.token,
+        }
+        response = post_formdata(payload, WALLET_PROPERTY_LIST, headers)
+        mtms = response.get("data", {}).get("metamonList", [])
+        if len(mtms) > 0:
+            data.extend(mtms)
+                
         return data
 
     def list_monsters(self):
