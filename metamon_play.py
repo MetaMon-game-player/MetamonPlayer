@@ -303,24 +303,24 @@ class MetamonPlayer:
         # Check current egg fragments
         check_bag_res = post_formdata(payload, CHECK_BAG_URL, headers)
         items = check_bag_res.get("data", {}).get("item")
-        total_egg_fragments = 0;
+        total_egg_fragments = 0
 
         for item in items:
             if item.get("bpType") == 1:
                 total_egg_fragments = item.get("bpNum")
                 break
 
-        total_egg = int(int(total_egg_fragments) / 1000);
+        total_egg = int(int(total_egg_fragments) / 1000)
 
         if total_egg < 1:
-            print("You don't have enough egg to mint")
+            print("You don't have enough egg fragments to mint")
             return
 
         # Mint egg
         res = post_formdata(payload, MINT_EGG_URL, headers)
         code = res.get("code")
         if code != "SUCCESS":
-            print("Mint egg failed!")
+            print("Mint eggs failed!")
             return
 
         print(f"Minted Eggs Total: {total_egg}")
