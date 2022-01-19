@@ -200,21 +200,14 @@ class MetamonPlayer:
 
     def get_wallet_properties(self):
         """ Obtain list of metamons on the wallet"""
-        data = []
-        page = 1
-        while True:
-            payload = {"address": self.address, "page": page, "pageSize": 60}
-            headers = {
-                "accessToken": self.token,
-            }
-            response = post_formdata(payload, WALLET_PROPERTY_LIST, headers)
-            mtms = response.get("data", {}).get("metamonList", [])
-            if len(mtms) > 0:
-                data.extend(mtms)
-                page += 1
-            else:
-                break
-        return data
+
+        payload = {"address": self.address}
+        headers = {
+            "accessToken": self.token,
+        }
+        response = post_formdata(payload, WALLET_PROPERTY_LIST, headers)
+        mtms = response.get("data", {}).get("metamonList", [])
+        return mtms
 
     def list_monsters(self):
         """ Obtain list of metamons on the wallet (deprecated)"""
@@ -233,8 +226,6 @@ class MetamonPlayer:
         mtm_stats_file_name = f"{w_name}_stats.tsv"
         self.init_token()
 
-        self.get_wallet_properties()
-        monsters = self.list_monsters()
         wallet_monsters = self.get_wallet_properties()
         print(f"Monsters total: {len(wallet_monsters)}")
 
@@ -308,15 +299,11 @@ class MetamonPlayer:
         }
         payload = {"address": self.address}
 
-        minted_eggs = 0
-
-        while True:
-            res = post_formdata(payload, MINT_EGG_URL, headers)
-            code = res.get("code")
-            if code != "SUCCESS":
-                break
-            minted_eggs += 1
-        print(f"Minted Eggs Total: {minted_eggs}")
+        res = post_formdata(payload, MINT_EGG_URL, headers)
+        code = res.get("code")
+        if code != "SUCCESS":
+            return
+        print(f"Minted Eggs! Check bag in game to see count and transaction history for amount minted")
 
 
 if __name__ == "__main__":
