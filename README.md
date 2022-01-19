@@ -69,6 +69,14 @@ stats to file it will be used for name of that file.
 If you have multiple wallets you can add several rows
 to this tsv file.
 
+### Alternatively can generate TSV with JS code
+
+After login success, in Chrome open Developer Tools, switch to tab Console, paste the bellow script => Enter
+
+    (()=>{var e=[["name","address","sign","msg"],["Wallet1",sessionStorage.getItem("account-address"),sessionStorage.getItem("connect-sign"),sessionStorage.getItem("connect-signMsg")]],t="";e.forEach(function(n,a){dataString=n.join("\t"),t+=a<e.length?dataString+"\n":dataString});!function(e,t,n){var a=document.createElement("a");n=n||"application/octet-stream",navigator.msSaveBlob?navigator.msSaveBlob(new Blob([e],{type:n}),t):URL&&"download"in a?(a.href=URL.createObjectURL(new Blob([e],{type:n})),a.setAttribute("download",t),document.body.appendChild(a),a.click(),document.body.removeChild(a)):location.href="data:application/octet-stream,"+encodeURIComponent(e)}(t,"wallets.tsv","text/tsv;encoding:utf-8")})();
+
+Thanks to <a href='https://github.com/thucngv'>thucngv</a>!
+
 # Preparation is complete! 
 ## Ready to roll?
 
