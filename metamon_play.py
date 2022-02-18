@@ -32,11 +32,10 @@ def post_formdata(payload, url="", headers=None):
     if headers is None:
         headers = {}
 
-    # Add delay to avoid error from too many requests per second
-    sleep(0.5)
-
     for _ in range(5):
         try:
+            # Add delay to avoid error from too many requests per second
+            sleep(1)
             response = requests.request("POST",
                                         url,
                                         headers=headers,
@@ -101,8 +100,11 @@ class MetamonPlayer:
 
     def init_token(self):
         """Obtain token for game session to perform battles and other actions"""
-        payload = {"address": self.address, "sign": self.sign, "msg": self.msg}
+        payload = {"address": self.address, "sign": self.sign, "msg": self.msg, "network": "1"}
         response = post_formdata(payload, TOKEN_URL)
+        if response.get("code") != "SUCCESS":
+            sys.stderr.write("Login failed, token is not initialized. Terminating\n")
+            sys.exit(-1)
         self.token = response.get("data")
 
     def change_fighter(self, monster_id):
