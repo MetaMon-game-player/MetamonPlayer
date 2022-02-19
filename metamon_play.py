@@ -19,6 +19,7 @@ LIST_BATTLER_URL = f"{BASE_URL}/getBattelObjects"
 WALLET_PROPERTY_LIST = f"{BASE_URL}/getWalletPropertyList"
 LVL_UP_URL = f"{BASE_URL}/updateMonster"
 MINT_EGG_URL = f"{BASE_URL}/composeMonsterEgg"
+CHECK_BAG_URL = f"{BASE_URL}/checkBag"
 
 
 def datetime_now():
@@ -31,11 +32,10 @@ def post_formdata(payload, url="", headers=None):
     if headers is None:
         headers = {}
 
-    # Add delay to avoid error from too many requests per second
-    sleep(0.5)
-
     for _ in range(5):
         try:
+            # Add delay to avoid error from too many requests per second
+            sleep(1)
             response = requests.request("POST",
                                         url,
                                         headers=headers,
@@ -100,8 +100,11 @@ class MetamonPlayer:
 
     def init_token(self):
         """Obtain token for game session to perform battles and other actions"""
-        payload = {"address": self.address, "sign": self.sign, "msg": self.msg}
+        payload = {"address": self.address, "sign": self.sign, "msg": self.msg, "network": "1"}
         response = post_formdata(payload, TOKEN_URL)
+        if response.get("code") != "SUCCESS":
+            sys.stderr.write("Login failed, token is not initialized. Terminating\n")
+            sys.exit(-1)
         self.token = response.get("data")
 
     def change_fighter(self, monster_id):
@@ -232,7 +235,6 @@ class MetamonPlayer:
         mtm_stats_file_name = f"{w_name}_stats.tsv"
         self.init_token()
 
-        monsters = self.list_monsters()
         wallet_monsters = self.get_wallet_properties()
         print(f"Monsters total: {len(wallet_monsters)}")
 
@@ -306,15 +308,30 @@ class MetamonPlayer:
         }
         payload = {"address": self.address}
 
-        minted_eggs = 0
+        # Check current egg fragments
+        check_bag_res = post_formdata(payload, CHECK_BAG_URL, headers)
+        items = check_bag_res.get("data", {}).get("item")
+        total_egg_fragments = 0
 
-        while True:
-            res = post_formdata(payload, MINT_EGG_URL, headers)
-            code = res.get("code")
-            if code != "SUCCESS":
+        for item in items:
+            if item.get("bpType") == 1:
+                total_egg_fragments = item.get("bpNum")
                 break
-            minted_eggs += 1
-        print(f"Minted Eggs Total: {minted_eggs}")
+
+        total_egg = int(int(total_egg_fragments) / 1000)
+
+        if total_egg < 1:
+            print("You don't have enough egg fragments to mint")
+            return
+
+        # Mint egg
+        res = post_formdata(payload, MINT_EGG_URL, headers)
+        code = res.get("code")
+        if code != "SUCCESS":
+            print("Mint eggs failed!")
+            return
+
+        print(f"Minted Eggs Total: {total_egg}")
 
 
 if __name__ == "__main__":
