@@ -19,11 +19,7 @@ LIST_BATTLER_URL = f"{BASE_URL}/getBattelObjects"
 WALLET_PROPERTY_LIST = f"{BASE_URL}/getWalletPropertyList"
 LVL_UP_URL = f"{BASE_URL}/updateMonster"
 MINT_EGG_URL = f"{BASE_URL}/composeMonsterEgg"
-<<<<<<< HEAD
-OPEN_EGG_URL = f"{BASE_URL}/openMonsterEgg"
 CHECK_BAG_URL = f"{BASE_URL}/checkBag"
-=======
->>>>>>> parent of 44ecbff (add open eggs function)
 
 
 def datetime_now():
@@ -352,11 +348,6 @@ if __name__ == "__main__":
                                                      "Two files <name>_summary.tsv and <name>_stats.tsv will "
                                                      "be saved in current dir.",
                         action="store_true", default=False)
-<<<<<<< HEAD
-    parser.add_argument("-o", "--open-eggs", help="Open the eggs with amount",
-                        type=int, default=0)
-=======
->>>>>>> parent of 44ecbff (add open eggs function)
 
     args = parser.parse_args()
 
