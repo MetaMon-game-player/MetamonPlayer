@@ -35,7 +35,7 @@ def post_formdata(payload, url="", headers=None):
     for _ in range(5):
         try:
             # Add delay to avoid error from too many requests per second
-            sleep(1)
+            sleep(1.1)
             response = requests.request("POST",
                                         url,
                                         headers=headers,
@@ -243,7 +243,7 @@ class MetamonPlayer:
             tear = monster.get("tear")
             level = monster.get("level")
             exp = monster.get("exp")
-            if level >= 60 or exp >= 600:
+            if int(level) >= 60 or int(exp) >= 600:
                 print(f"Monster {monster_id} cannot fight due to "
                       f"max lvl and/or exp overflow. Skipping...")
                 continue
