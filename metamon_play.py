@@ -242,6 +242,11 @@ class MetamonPlayer:
             monster_id = monster.get("id")
             tear = monster.get("tear")
             level = monster.get("level")
+            exp = monster.get("exp")
+            if level >= 60 or exp >= 600:
+                print(f"Monster {monster_id} cannot fight due to "
+                      f"max lvl and/or exp overflow. Skipping...")
+                continue
             battlers = self.list_battlers(monster_id)
             battler = picker_battler(battlers)
             target_monster_id = battler.get("id")
