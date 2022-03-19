@@ -162,6 +162,9 @@ class MetamonPlayer:
                 self.no_enough_money = True
                 break
             data = response.get("data", {})
+            if data is None:
+                print(f"Metamon {my_monster_id} cannot fight skipping...")
+                break
             fight_result = data.get("challengeResult", False)
             bp_fragment_num = data.get("bpFragmentNum", 10)
 
