@@ -35,7 +35,7 @@ def post_formdata(payload, url="", headers=None):
     for _ in range(5):
         try:
             # Add delay to avoid error from too many requests per second
-            sleep(1)
+            sleep(1.1)
             response = requests.request("POST",
                                         url,
                                         headers=headers,
@@ -100,12 +100,13 @@ class MetamonPlayer:
 
     def init_token(self):
         """Obtain token for game session to perform battles and other actions"""
-        payload = {"address": self.address, "sign": self.sign, "msg": self.msg, "network": "1"}
+        payload = {"address": self.address, "sign": self.sign, "msg": self.msg,
+                   "network": "1", "clientType": "MetaMask"}
         response = post_formdata(payload, TOKEN_URL)
         if response.get("code") != "SUCCESS":
             sys.stderr.write("Login failed, token is not initialized. Terminating\n")
             sys.exit(-1)
-        self.token = response.get("data")
+        self.token = response.get("data").get("accessToken")
 
     def change_fighter(self, monster_id):
         """Switch to next metamon if you have few"""
@@ -161,6 +162,9 @@ class MetamonPlayer:
                 self.no_enough_money = True
                 break
             data = response.get("data", {})
+            if data is None:
+                print(f"Metamon {my_monster_id} cannot fight skipping...")
+                break
             fight_result = data.get("challengeResult", False)
             bp_fragment_num = data.get("bpFragmentNum", 10)
 
@@ -206,7 +210,7 @@ class MetamonPlayer:
         data = []
         payload = {"address": self.address}
         headers = {
-            "accessToken": self.token,
+            "accesstoken": self.token,
         }
         response = post_formdata(payload, WALLET_PROPERTY_LIST, headers)
         mtms = response.get("data", {}).get("metamonList", [])
@@ -247,6 +251,11 @@ class MetamonPlayer:
             monster_id = monster.get("id")
             tear = monster.get("tear")
             level = monster.get("level")
+            exp = monster.get("exp")
+            if int(level) >= 60 or int(exp) >= 600:
+                print(f"Monster {monster_id} cannot fight due to "
+                      f"max lvl and/or exp overflow. Skipping...")
+                continue
             battlers = self.list_battlers(monster_id)
             battler = picker_battler(battlers)
             target_monster_id = battler.get("id")
