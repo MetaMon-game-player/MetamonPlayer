@@ -237,10 +237,15 @@ class MetamonPlayer:
         print(f"Monsters total: {len(wallet_monsters)}")
 
         available_monsters = [
-            monster for monster in wallet_monsters if monster.get("tear") > 0
+            monster for monster in wallet_monsters if monster.get("tear") > 0 and monster.get("level") < 60
+        ]
+        level60_monsters = [ 
+            monster for monster in wallet_monsters if monster.get("level") >= 60
         ]
         stats_l = []
         print(f"Available Monsters : {len(available_monsters)}")
+        print(f"Level 60 Monsters : {len(level60_monsters)}")
+
         for monster in available_monsters:
             monster_id = monster.get("id")
             tear = monster.get("tear")
