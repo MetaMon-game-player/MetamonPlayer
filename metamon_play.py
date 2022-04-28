@@ -237,18 +237,23 @@ class MetamonPlayer:
         print(f"Monsters total: {len(wallet_monsters)}")
 
         available_monsters = [
-            monster for monster in wallet_monsters if monster.get("tear") > 0
+            monster for monster in wallet_monsters if (monster.get("level") < 60 or monster.get("allowReset") == True) and monster.get("tear") > 0
+        ]
+        level60_monsters = [ 
+            monster for monster in wallet_monsters if monster.get("level") >= 60
         ]
         stats_l = []
         print(f"Available Monsters : {len(available_monsters)}")
+        print(f"Level 60 Monsters : {len(level60_monsters)}")
+
         for monster in available_monsters:
             monster_id = monster.get("id")
             tear = monster.get("tear")
             level = monster.get("level")
             exp = monster.get("exp")
-            if int(level) >= 60 or int(exp) >= 600:
+            if int(exp) >= 600 or (int(level) >= 60 and int(exp) >= 395):
                 print(f"Monster {monster_id} cannot fight due to "
-                      f"max lvl and/or exp overflow. Skipping...")
+                      f"exp overflow. Skipping...")
                 continue
             battlers = self.list_battlers(monster_id)
             battler = picker_battler(battlers)
