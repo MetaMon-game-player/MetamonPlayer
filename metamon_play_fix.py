@@ -429,8 +429,9 @@ while True:
        restart = "no"
     except Exception:
       pass
-      restart = input("do you want to restart bot?  ")
-       #manually restart bot after collapse errors 
+     restart = "y"
+      #restart = input("do you want to restart bot?  ")
+      #if you want to manually restart bot after collapse errors 
   exit()
      
  except Exception:
