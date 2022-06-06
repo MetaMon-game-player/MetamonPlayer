@@ -192,6 +192,7 @@ while True:
                                        headers)
                    code = res.get("code")
                    if code == "SUCCESS":
+                       my_exp = 0
                        tbar.set_description(f"LVL UP successful! Continue fighting with {my_monster_token_id}...")
                        my_level += 1
                        # Update league level if new level is 21 or 41
