@@ -18,6 +18,7 @@ START_FIGHT_URL = f"{BASE_URL}/startBattle"
 LIST_BATTLER_URL = f"{BASE_URL}/getBattelObjects"
 WALLET_PROPERTY_LIST = f"{BASE_URL}/getWalletPropertyList"
 RESET_METAMON_URL = f"{BASE_URL}/resetMonster"
+RESTORE_HEALTHY_URL = f"{BASE_URL}/addHealthy"
 LVL_UP_URL = f"{BASE_URL}/updateMonster"
 MINT_EGG_URL = f"{BASE_URL}/composeMonsterEgg"
 CHECK_BAG_URL = f"{BASE_URL}/checkBag"
@@ -84,6 +85,7 @@ while True:
                     sign,
                     msg="LogIn",
                     auto_reset_monster=True,
+                    auto_healthy_monster=True,
                     auto_lvl_up=False,
                     output_stats=False):
            self.no_enough_money = False
@@ -97,6 +99,7 @@ while True:
            self.sign = sign
            self.msg = msg
            self.auto_reset_monster = auto_reset_monster
+           self.auto_healthy_monster = auto_healthy_monster
            self.auto_lvl_up = auto_lvl_up
    
        def init_token(self):
@@ -145,6 +148,7 @@ while True:
            my_level = my_monster.get("level")
            my_exp = my_monster.get("exp")
            my_power = my_monster.get("sca")
+           my_health = my_monster.get("healthy")
            battle_level = pick_battle_level(my_level)
            tbar = trange(loop_count)
            
@@ -158,8 +162,7 @@ while True:
                headers = {
                    "accessToken": self.token,
                }
-               
-                     
+              
                response = post_formdata(payload, START_FIGHT_URL, headers)
                code = response.get("code")
                if code == "BATTLE_NOPAY":
@@ -174,7 +177,7 @@ while True:
                else:
                    new_exp =  3
                my_exp = my_exp + new_exp
-               tbar.set_description(f"Fighting id {my_monster_token_id} -exp: {my_exp}")
+               tbar.set_description(f"Fighting id {my_monster_token_id} -exp:{my_exp} Healthy {my_health}")
                #try to reset metamon level 60 with 395 exp - better to set 390 as limit to start reset, otherwise if reach 395 exp,you should reset him manually
                if my_exp >= 390:
                  res = post_formdata({"nftId": my_monster_id, "address": self.address},
@@ -184,7 +187,16 @@ while True:
                  if code == "SUCCESS":
                      my_exp = 0
                      tbar.set_description("RESET successful! Continue fighting...")
-               
+                     
+               if my_health <= 90:
+                 res = post_formdata({"nftId": my_monster_id, "address": self.address},
+                                     RESTORE_HEALTHY_URL,
+                                     headers)
+                 code = res.get("code")
+                 if code == "SUCCESS":
+                     my_health = 100
+                     tbar.set_description("RESTORED HEALTHY successful! Continue fighting...")
+                     
                if self.auto_lvl_up:
                    # Try to lvl up
                    res = post_formdata({"nftId": my_monster_id, "address": self.address},
@@ -286,13 +298,13 @@ while True:
                target_monster_id = battler.get("id")
    
                self.change_fighter(monster_id)
-   
                self.start_fight(monster,
                                 target_monster_id,
                                 loop_count=tear)
                if self.no_enough_money:
                    print("Not enough u-RACA")
                    break
+
            total_count = self.total_success + self.total_fail
            success_percent = .0
            if total_count > 0:
@@ -367,8 +379,8 @@ while True:
    
            print(f"Minted Eggs Total: {total_egg}")
    
-    except Exception:
-       pass
+    except Exception :
+     pass
    
    
    if __name__ == "__main__":
@@ -407,6 +419,13 @@ while True:
    
        wallets = pd.read_csv(args.input_tsv, sep=delim)
        
+       auto_healthy = True
+       for i, r in wallets.iterrows():
+         mtm = MetamonPlayer(address=r.address,
+                             sign=r.sign,
+                             msg=r.msg,
+                             auto_healthy_monster=auto_healthy,
+                             output_stats=args.save_results)
        auto_reset = True
        for i, r in wallets.iterrows():
          mtm = MetamonPlayer(address=r.address,
@@ -430,9 +449,9 @@ while True:
        restart = "no"
     except Exception:
       pass
-     restart = "y"
+      restart = "y"
       #restart = input("do you want to restart bot?  ")
-      #if you want to manually restart bot after collapse errors 
+       #manually restart bot after collapse errors 
   exit()
      
  except Exception:
