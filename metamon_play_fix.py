@@ -178,8 +178,8 @@ while True:
                    new_exp =  3
                my_exp = my_exp + new_exp
                tbar.set_description(f"Fighting id {my_monster_token_id} -exp:{my_exp} Healthy {my_health}")
-               #try to reset metamon level 60 with 395 exp - better to set 390 as limit to start reset, otherwise if reach 395 exp,you should reset him manually
-               if my_exp >= 390:
+               #try to reset metamon level 60 with 395 exp - works perfect 
+               if my_exp >= 395:
                  res = post_formdata({"nftId": my_monster_id, "address": self.address},
                                      RESET_METAMON_URL,
                                      headers)
