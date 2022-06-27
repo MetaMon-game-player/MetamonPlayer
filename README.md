@@ -100,7 +100,7 @@ Message:
 
 for example:
 
-    paython metamon_play.py -e -s
+    python metamon_play.py -e -s
 
 Will try to read file wallets.tsv in current dir,
 auto fight, mint eggs, and save stats to corresponding 
